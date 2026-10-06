@@ -9,7 +9,7 @@ CYAN, JAUNE, ROSE, LAVANDE, LIME, TURQ = "#22E0F5", "#FFE04A", "#F7A8F0", "#A68C
 SEM = {"Rojo": [220, 53, 69, 190], "Amarillo": [255, 194, 14, 190], "Verde": [40, 167, 69, 190]}
 SEMC = {"Rojo": "#DC3545", "Amarillo": AMBRE, "Verde": "#28A745", "": "#999"}
 
-st.set_page_config(page_title="Riesgo territorial · Consejo NL", page_icon="🧭", layout="wide")
+st.set_page_config(page_title="Factores de riesgo del reclutamiento juvenil · Nuevo León", page_icon="🧭", layout="wide")
 st.markdown(f"""<style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
 html, body, [class*="css"], .stApp {{ font-family:'Poppins',sans-serif; }}
@@ -56,11 +56,23 @@ esp = D["espacios_juveniles"]
 esp = esp[esp.lat.notna()] if len(esp) else esp
 
 # ---------- Encabezado + KPI ----------
-st.markdown("""<div class="hero"><span class="tag">Observatorio</span><h1>Riesgo territorial · prevención juvenil</h1>
-<p>Área Metropolitana de Monterrey y Nuevo León · Ecosistema de prevención escolar-comunitaria del reclutamiento juvenil</p></div>""", unsafe_allow_html=True)
+st.markdown("""<div class="hero"><span class="tag">Prevención del reclutamiento juvenil</span>
+<h1>Factores de riesgo del reclutamiento juvenil en Nuevo León</h1>
+<p>Dónde se concentran, por municipio, las condiciones asociadas al reclutamiento de adolescentes: rezago educativo, exposición a la violencia
+y falta de espacios protectores · Ecosistema de prevención escolar-comunitaria (AMM)</p></div>""", unsafe_allow_html=True)
+with st.expander("¿Qué estamos analizando?", expanded=True):
+    st.markdown("""
+**Pregunta que responde este tablero:** ¿en qué municipios coinciden más los factores de riesgo asociados al reclutamiento de adolescentes, y dónde faltan factores de protección?
+
+- **Factor de riesgo 1 · Rezago educativo.** % de jóvenes de 15–17 años que no asiste a la escuela (Censo 2020). El proyecto considera la salida de la escuela una señal de alerta.
+- **Factor de riesgo 2 · Exposición a la violencia.** Delitos priorizados por 100 mil habitantes (SESNSP, ene–ago 2026): extorsión, narcomenudeo, homicidio y lesiones dolosas, feminicidio, secuestro, trata, robo de vehículo.
+- **Factor de protección · Espacios para jóvenes.** Parques, deportivos, bibliotecas y centros comunitarios (DENUE). Más espacios reducen el score.
+- **Alerta de género (aparte del semáforo).** Compara víctimas mujeres y hombres de 13–17 años para que el riesgo de las mujeres no quede escondido en un promedio.
+
+""")
 n = Rf.semaforo.value_counts()
-kp = [(len(Rf), "municipios analizados"), (int(n.get("Rojo", 0)), "🔴 riesgo relativo alto"), (int(n.get("Amarillo", 0)), "🟡 riesgo relativo medio"),
-      (int(n.get("Verde", 0)), "🟢 riesgo relativo bajo"), (f"{int(Rf.delitos.sum()):,}", "delitos (ene–ago 2026)"), (int((Rf.alerta_genero == "⚠️ Sí").sum()), "⚠️ alertas de género")]
+kp = [(len(Rf), "municipios analizados"), (int(n.get("Rojo", 0)), "🔴 más factores de riesgo"), (int(n.get("Amarillo", 0)), "🟡 factores de riesgo medios"),
+      (int(n.get("Verde", 0)), "🟢 menos factores de riesgo"), (f"{int(Rf.delitos.sum()):,}", "delitos (ene–ago 2026)"), (int((Rf.alerta_genero == "⚠️ Sí").sum()), "⚠️ alertas de género")]
 for c, (v, l) in zip(st.columns(len(kp)), kp):
     c.markdown(f'<div class="kpi"><div class="n">{v}</div><div class="l">{l}</div></div>', unsafe_allow_html=True)
 if len(Rf):
@@ -131,6 +143,7 @@ with tabs[4]:
     st.dataframe(esp, width="stretch", hide_index=True) if len(esp) else st.write("Sin datos DENUE todavía (ver README).")
 with tabs[5]:
     st.markdown(f"""
+**Alcance.** El tablero mide factores asociados al riesgo de reclutamiento, no el reclutamiento en sí.\n
 **Fórmula.** riesgo = 0.40 × rezago educativo + 0.40 × incidencia − 0.20 × espacios para jóvenes (cada componente como percentil 0–1; resultado 0–100).
 Semáforo: verde < 34 ≤ amarillo < 67 ≤ rojo. **Es relativo**: compara municipios entre sí, no mide un nivel absoluto de riesgo. Ponderaciones por validar con el equipo técnico del Consejo NL.
 
