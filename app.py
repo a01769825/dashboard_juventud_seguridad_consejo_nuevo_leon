@@ -34,7 +34,7 @@ D = cargar()
 st.sidebar.header("Filtros")
 munis = sorted(D["municipios"].municipio)
 sel = st.sidebar.multiselect("Municipio", munis, default=munis)
-solo_prio = st.sidebar.checkbox("Solo delitos priorizados (Palermo/REDIM)", value=True,
+solo_prio = st.sidebar.checkbox("Solo delitos priorizados (asociados a delincuencia organizada)", value=True,
     help="Extorsión, narcomenudeo, homicidio y lesiones dolosas, feminicidio, secuestro y privación de la libertad, trata y robo de vehículo. "
          "Portación de armas y asociación delictuosa no existen en la tabla municipal SESNSP.")
 st.sidebar.markdown("---"); st.sidebar.subheader("Capas del mapa")
